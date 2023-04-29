@@ -1,0 +1,66 @@
+---
+title: "MNIST"
+---
+
+## 
+
+```{python}
+# MNIST dataset downloaded from Kaggle : 
+#https://www.kaggle.com/c/digit-recognizer/data
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
+```
+
+```{python}
+X = pd.read_csv("train.csv")
+print(X.shape)
+print(X)
+#separting the response variable and the pixel variables
+Y=X["label"]
+X=X.drop("label",axis=1)
+```
+
+```{python}
+plt.figure(figsize=(7,7))
+idx = 1
+grid_data = X.iloc[idx].to_numpy().reshape(28,28)  # reshape from 1d to 2d pixel array
+plt.imshow(grid_data, interpolation = "none", cmap = "gray")
+plt.show()
+```
+
+```{python}
+model = TSNE(n_components=2, random_state=0,perplexity=5)
+#training mode =l with perplexity 5
+tsne_data = model.fit_transform(X[:15000])
+tsne_data = np.vstack((tsne_data.T, Y[:15000])).transpose()
+dataframe=pd.DataFrame(data=tsne_data,columns=("dim_1","dim_2","label"))
+#using the 2 dimensions to plot 
+sns.FacetGrid(dataframe, hue="label").map(plt.scatter, 'dim_1', 'dim_2').add_legend()
+plt.title('With perplexity = 5')
+plt.show()
+```
+
+```{python}
+model = TSNE(n_components=2, random_state=0,perplexity=50)
+#training mode =l with perplexity 50
+tsne_data = model.fit_transform(X[:15000])
+tsne_data = np.vstack((tsne_data.T, Y[:15000])).transpose()
+dataframe=pd.DataFrame(data=tsne_data,columns=("dim_1","dim_2","label"))
+sns.FacetGrid(dataframe, hue="label").map(plt.scatter, 'dim_1', 'dim_2').add_legend()
+plt.title('With perplexity = 50')
+plt.show()
+```
+
+```{python}
+model = TSNE(n_components=2, random_state=0,perplexity=100)
+tsne_data = model.fit_transform(X[:15000])
+tsne_data = np.vstack((tsne_data.T, Y[:15000])).transpose()
+dataframe=pd.DataFrame(data=tsne_data,columns=("dim_1","dim_2","label"))
+sns.FacetGrid(dataframe, hue="label").map(plt.scatter, 'dim_1', 'dim_2').add_legend()
+plt.title('With perplexity = 100')
+plt.show()
+```
